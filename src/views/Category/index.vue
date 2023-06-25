@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { getBannerAPI } from '@/apis/home'
 import GoodsItem from '@/views/Home/components/GoodsItem.vue'
-// 解决路由复用问题
+// 解决路由缓存问题
 import { onBeforeRouteUpdate } from 'vue-router';
 import router from '@/router';
 

@@ -15,7 +15,7 @@ onMounted(() => categoryStore.getCategory())
     <LayoutFixed />
     <LayoutNav />
     <LayoutHeader />
-    <!-- 解决路由组件复用问题： 添加key破坏复用机制 强制销毁重建  简单粗暴 -->
+    <!-- 解决路由缓存（组件复用）问题： 添加key破坏复用机制 强制销毁重建  简单粗暴 -->
     <!-- <RouterView :key="$route.fullPath" /> -->
     <RouterView />
     <LayoutFooter />
