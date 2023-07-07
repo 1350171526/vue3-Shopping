@@ -24,6 +24,15 @@ const rules = {
     }
   ]
 }
+
+const fromRef = ref(null)
+const doLogin = () =>{
+  fromRef.value.validate((valid) => {
+    if (valid){
+
+    }
+  })
+}
 </script>
 
 
@@ -48,7 +57,7 @@ const rules = {
         </nav>
         <div class="account-box">
           <div class="form">
-            <el-form :model="userInfo" :rules="rules" label-position="right" label-width="60px"
+            <el-form ref="formRef" :model="userInfo" :rules="rules" label-position="right" label-width="60px"
               status-icon>
               <el-form-item prop="account" label="账户">
                 <el-input v-model="userInfo.account" />
@@ -61,7 +70,7 @@ const rules = {
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" class="subBtn">点击登录</el-button>
+              <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
             </el-form>
           </div>
         </div>
