@@ -56,8 +56,8 @@ const rules = {
               <el-form-item prop="password" label="密码">
                 <el-input v-model="userInfo.password" />
               </el-form-item>
-              <el-form-item label-width="22px">
-                <el-checkbox  size="large">
+              <el-form-item  prop="agree" label-width="22px">
+                <el-checkbox  v-model="userInfo.agree" size="large">
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
