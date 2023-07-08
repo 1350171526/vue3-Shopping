@@ -24,5 +24,6 @@ export const useUserStore = defineStore('user', () => {
     clearUserInfo
   }
 }, {
+  // 持久化存储
   persist: true,
 })
