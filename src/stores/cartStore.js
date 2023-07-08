@@ -23,9 +23,18 @@ export const useCartStore = defineStore('cart', () => {
       cartList.value.push(goods)
     }
   }
+
+// 删除购物车
+  const delCart = (skuId) =>{
+    // 找到删除项的下标值
+    const idx = cartList.value.findIndex((item) => skuId === item.skuId)
+    cartList.value.splice(idx,1)
+  }
   return {
     cartList,
-    addCart
+    addCart,
+    addCart,delCart
+
   }
 }, {
     // 持久化存储

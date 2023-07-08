@@ -1,6 +1,6 @@
 <script setup>
 
-import { useCartStore } from '@/stores/stores';
+import { useCartStore } from '@/stores/cartStore';
 import DetailHot from './components/DetailHot.vue'
 
 import { getDetail } from '@/apis/detail'
@@ -412,4 +412,4 @@ const addCart =()=>{
 .bread-container {
   padding: 25px 0;
 }
-</style>
+</style>@/stores/cartStore
