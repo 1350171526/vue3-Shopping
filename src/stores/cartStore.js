@@ -40,8 +40,16 @@ export const useCartStore = defineStore('cart', () => {
   const singleCheck = (skuId,selected) =>{
     // 通过skuId找到修改的那一项 然后把他的selected修改为传过来的selected
     const item = cartList.value.find((item) => item.skuId === skuId)
-    console.log(item);
+    // console.log(item);
     item.selected = selected
+  }
+
+  // isAll是否全选
+  const isAll = computed(() => cartList.value.every((item) => item.selected))
+
+  // 全选功能
+  const allCheck = (selected) => {
+    cartList.value.forEach(item => item.selected = selected)
   }
   
   return {
@@ -50,7 +58,9 @@ export const useCartStore = defineStore('cart', () => {
     delCart,
     allCount,
     allPrice,
-    singleCheck
+    singleCheck,
+    isAll,
+    allCheck
 
   }
 }, {
