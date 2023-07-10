@@ -1,6 +1,6 @@
 <script setup>
 // import LayoutHeaderUl from './LayoutHeaderUl.vue'
-import { useCategoryStore } from '@/stores/category'
+import { useCategoryStore } from '@/stores/categoryStore'
 
 // vueUse
 import { useScroll } from '@vueuse/core'
@@ -117,4 +117,4 @@ const categoryStore = useCategoryStore()
     }
   }
 }
-</style>
+</style>@/stores/categoryStore
