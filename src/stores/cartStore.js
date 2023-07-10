@@ -55,6 +55,11 @@ export const useCartStore = defineStore('cart', () => {
     
   }
 
+  // 退出登录时 清除购物车信息
+  const clearCart = () =>{
+    cartList.value=[]
+  }
+
 
 
   // 计算属性
@@ -94,7 +99,8 @@ export const useCartStore = defineStore('cart', () => {
     isAll,
     allCheck,
     selectedCount,
-    selectedPrice
+    selectedPrice,
+    clearCart
 
   }
 }, {
