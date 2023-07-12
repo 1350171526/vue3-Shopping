@@ -34,12 +34,12 @@ onMounted(() => getGoodList())
 
 // tab切换回调
 const tabChange = () => {
-  console.log('tab切换了', reqData.value.sortField)
+  // console.log('tab切换了', reqData.value.sortField)
   reqData.value.page = 1
   getGoodList()
 }
 
-// 加载更多
+// 加载更多   无限加载
 const disabled = ref(false)
 const load = async () => {
   // console.log('加载更多数据咯')
