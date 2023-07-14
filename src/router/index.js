@@ -36,7 +36,7 @@ const router = createRouter({
         component: subCategory
       },
       {
-        path: 'datail/:id',
+        path: 'detail/:id',
         component: Detail
       },
       {

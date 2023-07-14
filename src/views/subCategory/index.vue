@@ -7,13 +7,6 @@ import GoodsItem from '../Home/components/GoodsItem.vue';
 // 获取面包屑导航数据
 const filterData = ref({})
 const route = useRoute()
-const getFilterData = async (id = route.params.id) => {
-  
-  const res = await getCategoryFilterAPI(id)
-  filterData.value = res.result
-}
-
-onMounted(() => getFilterData())
 
 // 获取基础列表数据渲染
 const goodList = ref([])
@@ -23,20 +16,29 @@ const reqData = ref({
   pageSize: 20,
   sortField: 'publishTime'
 })
+
+const getFilterData = async (id = route.params.id) => {
   
-const getGoodList = async () => {
-  const res = await getSubCategoryAPI(reqData.value)
-  // console.log(res)
-  goodList.value = res.result.items
+  const res = await getCategoryFilterAPI(id)
+  filterData.value = res.result
+  goodList.value = res.result.goods
 }
+
+onMounted(() => getFilterData())
+
+// const getGoodList = async () => {
+//   const res = await getCategoryFilterAPI(route.params.id)
+//   // console.log(res)
   
-onMounted(() => getGoodList())
+// }
+  
+// onMounted(() => getGoodList())
 
 // tab切换回调
 const tabChange = () => {
   // console.log('tab切换了', reqData.value.sortField)
   reqData.value.page = 1
-  getGoodList()
+  getFilterData()
 }
 
 // 加载更多   无限加载
@@ -73,7 +75,7 @@ const load = async () => {
       </el-tabs>
       <div class="body" v-infinite-scroll="load" :infinite-scroll-disabled="disabled"> 
          <!-- 商品列表-->
-         <GoodsItem v-for="goods in goodList" :goods="goods" :key="goods" />
+         <GoodsItem v-for="goods in goodList" :goods="goods" :key="goods" @click="$router.push(`/detail/${goods.id}`)" />
       </div>
     </div>
   </div>

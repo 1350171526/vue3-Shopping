@@ -42,7 +42,7 @@ const { categoryData } = useCategory()
           <h3>- {{ item.name }}-</h3>
         </div>
         <div class="body">
-          <GoodsItem v-for="good in item.goods" :goods="good" :key="good.id" />
+          <GoodsItem v-for="good in item.goods" :goods="good" :key="good.id" @click="$router.push(`/detail/${good.id}`)" />
         </div>
       </div>
     </div>

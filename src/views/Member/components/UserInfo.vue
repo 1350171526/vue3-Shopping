@@ -44,7 +44,7 @@ onMounted(() => getLikeList())
         <h4 data-v-bcb266e0="">猜你喜欢</h4>
       </div>
       <div class="goods-list">
-        <GoodsItem v-for="good in likeList" :key="good.id" :goods="good" />
+        <GoodsItem v-for="good in likeList" :key="good.id" :goods="good" @click="$router.push(`/detail/${good.id}`)" />
       </div>
     </div>
   </div>

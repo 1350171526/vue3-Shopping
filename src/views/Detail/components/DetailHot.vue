@@ -4,6 +4,8 @@ import { fetchHotGoodsAPI } from '@/apis/detail'
 import { useRoute } from 'vue-router'
 import { computed } from '@vue/reactivity'
 
+// 路由缓存
+import { onBeforeRouteUpdate } from 'vue-router';
 
 // type适配不同类型热榜数据
 const props = defineProps({
@@ -23,15 +25,25 @@ const title = computed(() => TITLEMAP[props.type])
 const goodList = ref([])
 
 const route = useRoute()
-const getHotList = async () => {
+const getHotList = async (id=route.params.id, type= props.type) => {
 
-  const res = await fetchHotGoodsAPI({
-    id: route.params.id,
-    type: props.type
-  })
+  const res = await fetchHotGoodsAPI({id,type})
   goodList.value = res.result
 }
 onMounted(() => getHotList())
+
+onBeforeRouteUpdate((to) => {
+  const getHotList = async () => {
+
+  const res = await fetchHotGoodsAPI({
+    id: to.params.id,
+    type: props.type
+  })
+  goodList.value = res.result
+  }
+  getHotList()
+})
+
 </script>
 
 
@@ -39,7 +51,7 @@ onMounted(() => getHotList())
     <div class="goods-hot">
       <h3> {{ title }} </h3>
       <!-- 商品区块 -->
-      <RouterLink :to="`/detail/${item.id}`" class="goods-item" v-for="item in goodList" :key="item.id">
+      <RouterLink :to="`/detail/${item.id}`" class="goods-item" v-for="item in goodList" :key="item.id" > 
         <img :src="item.picture" alt="" />
         <p class="name ellipsis">{{ item.name }}</p>
         <p class="desc ellipsis">{{ item.desc }}</p>

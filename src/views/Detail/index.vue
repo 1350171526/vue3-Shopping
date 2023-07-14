@@ -7,14 +7,18 @@ import { getDetail } from '@/apis/detail'
 import { ElMessage } from 'element-plus';
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+
+// 路由缓存
+import { onBeforeRouteUpdate } from 'vue-router';
+
 const goods = ref({})
 const route = useRoute()
 const cartStore = useCartStore()
 
 
 
-const getGoods = async () => {
-  const res = await getDetail(route.params.id)
+const getGoods = async (id = route.params.id) => {
+  const res = await getDetail(id)
   
   goods.value = res.result
 }
@@ -50,6 +54,10 @@ const addCart =()=>{
     ElMessage.warning('请选择规格')
   }
 }
+
+onBeforeRouteUpdate((to) => {
+  getGoods(to.params.id)
+})
 </script>
 <template>
   <div class="xtx-goods-page">
@@ -68,7 +76,7 @@ const addCart =()=>{
             goods.categories[0].name
           }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item>抓绒保暖，毛毛虫子儿童运动鞋</el-breadcrumb-item>
+          <el-breadcrumb-item>{{goods.name}}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <!-- 商品信息 -->
