@@ -3,6 +3,8 @@ import LayoutNav from './components/LayoutNav.vue'
 import LayoutHeader from './components/LayoutHeader.vue'
 import LayoutFooter from './components/LayoutFooter.vue'
 import LayoutFixed from './components/LayoutFixed.vue'
+import ToUp from './components/ToUp.vue'
+
 
 // 触发获取导航列表的action
 import { useCategoryStore } from '@/stores/categoryStore'
@@ -17,6 +19,7 @@ onMounted(() => categoryStore.getCategory())
     <LayoutHeader />
     <!-- 解决路由缓存（组件复用）问题： 添加key破坏复用机制 强制销毁重建  简单粗暴 -->
     <!-- <RouterView :key="$route.fullPath" /> -->
+    <ToUp />
     <RouterView />
     <LayoutFooter />
 </template>

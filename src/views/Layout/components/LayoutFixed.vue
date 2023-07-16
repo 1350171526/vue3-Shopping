@@ -5,13 +5,15 @@ import { useCategoryStore } from '@/stores/categoryStore'
 // vueUse
 import { useScroll } from '@vueuse/core'
 const { y } = useScroll(window)
-// console.log(y)
+
+// console.log(y.value)  
+
 const categoryStore = useCategoryStore()
 
 </script>
 
 <template>
-  <div class="app-header-sticky" :class="{ show: y > 78 }">
+  <div class="app-header-sticky" :class="{ show: y > 78 }" >
     <div class="container">
       <RouterLink class="logo" to="/" />
       <!-- 导航区域 -->
