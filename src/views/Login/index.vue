@@ -17,12 +17,13 @@ const userInfo = ref({
 
 // 规则数据对象
 const rules = {
+  // trigger: 'blur' 表示失去焦点的时候进行验证  trigger: 'change' 表示当值发生变化时进行验证
   account: [
-    { required: true, message: '用户名不能为空' }
+    { required: true, message: '用户名不能为空', trigger: 'blur'}
   ],
   password: [
-    { required: true, message: '密码不能为空' },
-    { min: 6, max: 24, message: '密码长度要求6-14个字符' }
+    { required: true, message: '密码不能为空', trigger: 'blur' },
+    { min: 6, max: 24, message: '密码长度要求6-14个字符', trigger: 'blur'}
   ],
   agree: [
     {

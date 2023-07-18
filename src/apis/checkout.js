@@ -16,3 +16,19 @@ export const createOrderAPI = (data) => {
     data
   })
 }
+// 添加地址
+export const addAddressAPI = (data) => {
+  return request({
+    url: '/member/address',
+    method: 'POST',
+    data
+  })
+}
+
+// 删除地址
+export const delAdressAPI = (id) => {
+  return request({
+    url: `/member/address/${id}`,
+    method: 'DELETE'
+  })
+}

@@ -1,19 +1,25 @@
 <script setup>
-import { getCheckoutInfoAPI,createOrderAPI } from '@/apis/checkout'
+import { getCheckoutInfoAPI,createOrderAPI,addAddressAPI,delAdressAPI } from '@/apis/checkout'
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router'; 
 import { useCartStore }from '@/stores/cartStore'
+// import { ElMessage } from 'element-plus'
+// import 'element-plus/theme-chalk/el-message.css'
+
 
 const cartStore = useCartStore()
 const router = useRouter()
 const checkInfo = ref({})  // 订单对象
 const curAddress = ref({})
+const orderId = ref()
+const userId = ref({})
 const getCheckoutInfo = async () =>{
   const res = await getCheckoutInfoAPI()
   checkInfo.value = res.result
   // 适配默认地址 从地址列表筛选出来 isdefault ===0 的项
   const item = checkInfo.value.userAddresses.find(item => item.isDefault === 0)
   curAddress.value = item
+  userId.value = res.result.userAddresses
 }
 onMounted(()=> getCheckoutInfo())
 
@@ -22,15 +28,16 @@ const showDialog = ref(false)
 
 // 切换地址
 const activeAddress = ref({})
-const switchAddress = (item) => {
+const switchAddress = async (item) => {
+  await getCheckoutInfo()
   activeAddress.value = item
 }
 const comfirm = () =>{
   curAddress.value =activeAddress.value
   showDialog.value =false
   activeAddress.value = {}
-
 }
+
 // 创建订单
 const createOrder = async () => {
   const res = await createOrderAPI({
@@ -46,7 +53,7 @@ const createOrder = async () => {
     }),
     addressId: curAddress.value.id
   })
-  const orderId = res.result.id
+  orderId = res.result.id
   router.push({
     path: '/pay',
     // 添加参数
@@ -56,6 +63,76 @@ const createOrder = async () => {
   })
   // 更新购物车
   cartStore.updateNewList()
+}
+
+// 添加地址
+// const newAddress = ref({})
+const formRef = ref(null)
+const addFlag = ref(false)
+// import { reactive } from 'vue'
+
+const form = ref({
+  receiver: '',
+  contact: '',
+  fullLocation: '',
+  address: '',
+})
+// 自定义规则
+const rules = {
+  // trigger: 'blur' 表示失去焦点的时候进行验证  trigger: 'change' 表示当值发生变化时进行验证
+  receiver: [
+    {required: true, message: '收货人不能为空', trigger: 'blur'}
+  ],
+  contact: [
+    {required: true, message: '联系方式不能为空', trigger: 'blur'},
+    {min: 11, max: 11, message: '联系方式长度为11位手机号码', trigger: 'blur'}
+  ],
+  fullLocation: [
+    {required: true, message: '家庭地址不能为空(xx省、xx市、xx县/区)', trigger: 'blur'}
+  ],
+  address: [
+    {required: true, message: '详细地址不能为空', trigger: 'blur'}
+  ]
+}
+
+const addAddress = async () => {
+  formRef.value.validate(async (valid) =>{
+    // valid 表示所有的表单全部为验证通过 才为true
+    if (valid) {
+      await addAddressAPI({
+      receiver: form.value.receiver,
+      contact: form.value.contact,
+      provinceCode: "未知",
+      cityCode: "未知",
+      countyCode: "未知",
+      address: form.value.address,
+      postalCode: "未知",
+      addressTags: "家里",
+      isDefault: 1,
+      fullLocation: form.value.fullLocation
+    })
+    await getCheckoutInfo()
+    // orderId = res.result.id
+    curAddress.value = form.value
+    // console.log(orderId);
+    addFlag.value = false
+    form.value = {}
+    }
+
+  })
+  
+  
+}
+// 删除地址
+const delAdress = async (id) => {
+  await delAdressAPI(id)
+  await getCheckoutInfo()
+}
+// 取消添加地址
+const cancel = () => {
+  form.value = {}
+  addFlag.value = false
+
 }
 </script>
 
@@ -156,7 +233,7 @@ const createOrder = async () => {
       </div>
     </div>
   </div>
-  <!-- 切换地址 -->
+  <!--切换地址-->
   <el-dialog v-model="showDialog" title="切换收货地址" width="30%" center>
   <div class="addressWrapper">
     <div class="text item" :class="{ active:activeAddress.id === item.id }" @click="switchAddress(item)" v-for="item in checkInfo.userAddresses"  :key="item.id">
@@ -164,17 +241,43 @@ const createOrder = async () => {
       <li><span>收<i />货<i />人：</span>{{ item.receiver }} </li>
       <li><span>联系方式：</span>{{ item.contact }}</li>
       <li><span>收货地址：</span>{{ item.fullLocation + item.address }}</li>
+      
       </ul>
+      <i class="iconfont icon-close-new" @click="delAdress(item.id)"></i>
     </div>
+    
   </div>
   <template #footer>
     <span class="dialog-footer">
-      <el-button>取消</el-button>
+      <el-button @click="showDialog=fales">取消</el-button>
       <el-button type="primary" @click="comfirm">确定</el-button>
     </span>
   </template>
 </el-dialog>
   <!-- 添加地址 -->
+  <el-dialog v-model="addFlag" title="添加收货地址" width="30%" center>
+    <el-form :model="form" ref="formRef" :rules="rules" label-width="120px">
+      <el-form-item prop="receiver" label="收货人：">
+        <el-input v-model="form.receiver" />
+      </el-form-item>
+      <el-form-item prop="contact" label="联系方式：">
+        <el-input v-model="form.contact" />
+      </el-form-item>
+      <el-form-item prop="fullLocation" label="家庭地址：">
+        <el-input v-model="form.fullLocation" label-width="30px" class="little" />
+      </el-form-item>
+      <el-form-item prop="address" label="详细地址：">
+        <el-input v-model="form.address" />
+      </el-form-item>
+    </el-form>
+    
+  <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="cancel">取消</el-button>
+      <el-button type="primary" @click="addAddress">应用</el-button>
+    </span>
+  </template>
+</el-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -209,7 +312,6 @@ const createOrder = async () => {
     min-height: 90px;
     display: flex;
     align-items: center;
-
     .none {
       line-height: 90px;
       color: #999;
@@ -217,10 +319,10 @@ const createOrder = async () => {
       width: 100%;
     }
 
-    >ul {
+    ul {
       flex: 1;
       padding: 20px;
-
+      
       li {
         line-height: 30px;
 
@@ -234,7 +336,9 @@ const createOrder = async () => {
           }
         }
       }
-    }
+    
+    } 
+
 
     >a {
       color: $xtxColor;
@@ -370,11 +474,17 @@ const createOrder = async () => {
   min-height: 90px;
   display: flex;
   align-items: center;
-
+  cursor: auto;
+  position: relative;
+  i{
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+  }
   &.item {
     border: 1px solid #f5f5f5;
     margin-bottom: 10px;
-    cursor: pointer;
+    // cursor: pointer;
 
     &.active,
     &:hover {
@@ -386,7 +496,9 @@ const createOrder = async () => {
       padding: 10px;
       font-size: 14px;
       line-height: 30px;
+      position: relative;
     }
   }
 }
+
 </style>

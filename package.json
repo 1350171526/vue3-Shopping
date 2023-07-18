@@ -12,6 +12,7 @@
     "@vueuse/core": "^10.2.0",
     "axios": "^1.4.0",
     "dayjs": "^1.11.9",
+    "element-china-area-data": "^6.0.2",
     "element-plus": "^2.3.7",
     "esbuild": "^0.18.11",
     "pinia": "^2.1.3",

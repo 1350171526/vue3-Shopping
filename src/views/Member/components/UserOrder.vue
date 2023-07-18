@@ -133,7 +133,6 @@ const fomartPayState = (payState) => {
               :total="total" 
               @current-change="pageChange" 
               :page-size="params.pageSize" 
-              background
               layout="prev, pager, next" />
           </div>
         </div>
