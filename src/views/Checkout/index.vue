@@ -103,11 +103,12 @@ const rules = {
   ],
   contact: [
     {required: true, message: '联系方式不能为空', trigger: 'blur'},
-    {min: 11, max: 11, message: '联系方式长度为11位手机号码', trigger: 'blur'}
+    // 首尾用'//'包裹 ^表示开头 &表示结尾 第一个数字是1 第二个数字是3-9 /d表示任意数 {9}表示/d要出现9次
+    {pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur'}
   ],
   postalCode: [
     {required: true, message: '邮政编码不能为空', trigger: 'blur'},
-    {min: 6, max: 6, message: '邮政编码长度为6位数字', trigger: 'blur'}
+    {pattern: /^\d{6}$/, message: '请输入正确的邮政编码', trigger: 'blur'}
   ],
   address: [
     {required: true, message: '详细地址不能为空', trigger: 'blur'}
