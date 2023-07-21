@@ -26,9 +26,25 @@ export const addAddressAPI = (data) => {
 }
 
 // 删除地址
-export const delAdressAPI = (id) => {
+export const delAddressAPI = (id) => {
   return request({
     url: `/member/address/${id}`,
     method: 'DELETE'
+  })
+}
+
+// 修改地址
+export const reviseAddressAPI = (id,data) => {
+  return request({
+    url: `/member/address/${id}`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 获取地址
+export const getAddressAPI = () => {
+  return request({
+    url: '/member/address'
   })
 }

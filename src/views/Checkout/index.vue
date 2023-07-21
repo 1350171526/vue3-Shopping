@@ -1,25 +1,36 @@
 <script setup>
-import { getCheckoutInfoAPI,createOrderAPI,addAddressAPI,delAdressAPI } from '@/apis/checkout'
-import { onMounted, ref } from 'vue';
+import { getCheckoutInfoAPI,createOrderAPI,addAddressAPI,delAddressAPI,reviseAddressAPI, getAddressAPI } from '@/apis/checkout'
+import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router'; 
 import { useCartStore }from '@/stores/cartStore'
-// import { ElMessage } from 'element-plus'
-// import 'element-plus/theme-chalk/el-message.css'
+// 导入element 地区组件
+import { regionData,codeToText  } from 'element-china-area-data'
+// import { formatPostcssSourceMap } from 'vite';
+
 
 
 const cartStore = useCartStore()
 const router = useRouter()
 const checkInfo = ref({})  // 订单对象
 const curAddress = ref({})
-const orderId = ref()
-const userId = ref({})
+// const orderId = ref()
+const addressInfo = ref({})
+// const userId = ref({})
+const getAddress = async () =>{
+  const res = await getAddressAPI()
+  addressInfo.value = res.result
+  // 适配默认地址 从地址列表筛选出来 isdefault ===0 的项
+  const item = addressInfo.value.find(item => item.isDefault === 0)
+  curAddress.value = item
+}
+onMounted(() => getAddress())
 const getCheckoutInfo = async () =>{
   const res = await getCheckoutInfoAPI()
   checkInfo.value = res.result
-  // 适配默认地址 从地址列表筛选出来 isdefault ===0 的项
-  const item = checkInfo.value.userAddresses.find(item => item.isDefault === 0)
-  curAddress.value = item
-  userId.value = res.result.userAddresses
+  
+  // const item = checkInfo.value.userAddresses.find(item => item.isDefault === 0)
+  // curAddress.value = item
+  // userId.value = res.result.userAddresses
 }
 onMounted(()=> getCheckoutInfo())
 
@@ -29,8 +40,10 @@ const showDialog = ref(false)
 // 切换地址
 const activeAddress = ref({})
 const switchAddress = async (item) => {
-  await getCheckoutInfo()
+  // await getCheckoutInfo()
+  // await getAddress()
   activeAddress.value = item
+
 }
 const comfirm = () =>{
   curAddress.value =activeAddress.value
@@ -53,7 +66,7 @@ const createOrder = async () => {
     }),
     addressId: curAddress.value.id
   })
-  orderId = res.result.id
+  const orderId = res.result.id
   router.push({
     path: '/pay',
     // 添加参数
@@ -71,12 +84,17 @@ const formRef = ref(null)
 const addFlag = ref(false)
 // import { reactive } from 'vue'
 
+
 const form = ref({
   receiver: '',
   contact: '',
-  fullLocation: '',
   address: '',
+  postalCode: '',
+  addressTags: '无',
+  fullLocation: [],
+
 })
+
 // 自定义规则
 const rules = {
   // trigger: 'blur' 表示失去焦点的时候进行验证  trigger: 'change' 表示当值发生变化时进行验证
@@ -87,53 +105,73 @@ const rules = {
     {required: true, message: '联系方式不能为空', trigger: 'blur'},
     {min: 11, max: 11, message: '联系方式长度为11位手机号码', trigger: 'blur'}
   ],
-  fullLocation: [
-    {required: true, message: '家庭地址不能为空(xx省、xx市、xx县/区)', trigger: 'blur'}
+  postalCode: [
+    {required: true, message: '邮政编码不能为空', trigger: 'blur'},
+    {min: 6, max: 6, message: '邮政编码长度为6位数字', trigger: 'blur'}
   ],
   address: [
     {required: true, message: '详细地址不能为空', trigger: 'blur'}
+  ],
+  fullLocation: [
+  {required: true, message: '收货地址不能为空', trigger: 'change'}
   ]
 }
 
 const addAddress = async () => {
+  // console.log(cityList);
+  const temp = computed(() => {
+    // Array.from()方法可以将proxy对象转化为数组！！！
+    const temp1 = Array.from(form.value.fullLocation)
+    const temp2 = temp1.map((item) => codeToText[item]).join(" ")
+    return temp2
+  })
+  const provinceCode = form.value.fullLocation[0] * 10000
+  const cityCode = form.value.fullLocation[1] * 100
+
+  // console.log(typeof(checkInfo.value.userAddresses[6].fullLocation));
   formRef.value.validate(async (valid) =>{
     // valid 表示所有的表单全部为验证通过 才为true
+    
     if (valid) {
       await addAddressAPI({
       receiver: form.value.receiver,
       contact: form.value.contact,
-      provinceCode: "未知",
-      cityCode: "未知",
-      countyCode: "未知",
+      provinceCode: provinceCode,
+      cityCode: cityCode,
+      countyCode: form.value.fullLocation[2],
       address: form.value.address,
-      postalCode: "未知",
-      addressTags: "家里",
+      postalCode: form.value.postalCode,
+      addressTags: form.value.addressTags,
       isDefault: 1,
-      fullLocation: form.value.fullLocation
+      fullLocation: temp.value
     })
-    await getCheckoutInfo()
+    await getAddress()
     // orderId = res.result.id
-    curAddress.value = form.value
+    curAddress.value = addressInfo.value[0]
+    curAddress.value.fullLocation = temp.value
     // console.log(orderId);
     addFlag.value = false
     form.value = {}
     }
-
   })
   
   
 }
 // 删除地址
 const delAdress = async (id) => {
-  await delAdressAPI(id)
-  await getCheckoutInfo()
+  await delAddressAPI(id)
+  await getAddress()
 }
 // 取消添加地址
 const cancel = () => {
   form.value = {}
   addFlag.value = false
-
 }
+
+
+// 修改地址
+
+
 </script>
 
 <template>
@@ -236,13 +274,14 @@ const cancel = () => {
   <!--切换地址-->
   <el-dialog v-model="showDialog" title="切换收货地址" width="30%" center>
   <div class="addressWrapper">
-    <div class="text item" :class="{ active:activeAddress.id === item.id }" @click="switchAddress(item)" v-for="item in checkInfo.userAddresses"  :key="item.id">
+    <div class="text item" :class="{ active:activeAddress.id === item.id }" @click="switchAddress(item)" v-for="item in addressInfo"  :key="item.id">
       <ul>
       <li><span>收<i />货<i />人：</span>{{ item.receiver }} </li>
       <li><span>联系方式：</span>{{ item.contact }}</li>
-      <li><span>收货地址：</span>{{ item.fullLocation + item.address }}</li>
+      <li><span>收货地址：</span>{{ item.fullLocation }} {{ item.address }}</li>
       
       </ul>
+      <a>修改地址</a>
       <i class="iconfont icon-close-new" @click="delAdress(item.id)"></i>
     </div>
     
@@ -257,17 +296,31 @@ const cancel = () => {
   <!-- 添加地址 -->
   <el-dialog v-model="addFlag" title="添加收货地址" width="30%" center>
     <el-form :model="form" ref="formRef" :rules="rules" label-width="120px">
-      <el-form-item prop="receiver" label="收货人：">
-        <el-input v-model="form.receiver" />
+      <el-form-item prop="receiver" label="收货人：" >
+        <el-input v-model="form.receiver" placeholder="请填写收货人" />
       </el-form-item>
       <el-form-item prop="contact" label="联系方式：">
-        <el-input v-model="form.contact" />
+        <el-input v-model="form.contact" placeholder="请填写联系方式" />
       </el-form-item>
-      <el-form-item prop="fullLocation" label="家庭地址：">
-        <el-input v-model="form.fullLocation" label-width="30px" class="little" />
+      <el-form-item prop="postalCode" label="邮政编码：">
+        <el-input v-model="form.postalCode" placeholder="请填写邮政编码" />
       </el-form-item>
-      <el-form-item prop="address" label="详细地址：">
-        <el-input v-model="form.address" />
+      <!-- <el-select prop="province" v-model="form.province" placeholder="请选择省" @change="changeProvince()">
+            <el-option v-for="item in regionData" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select prop="city" v-model="form.city" placeholder="请选择市" :disabled="!form.province " @change="changeCity()">
+            <el-option v-for="item in cityList" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select prop="area" v-model="form.area" placeholder="请选择区/县" :disabled="!form.province || !form.city " >
+            <el-option v-for="item in areaList" :label="item.label" :value="item.value" />
+      </el-select> -->
+      
+      <el-form-item prop="fullLocation" label="收货地址：" >
+        <el-cascader size="large" :options="regionData" v-model="form.fullLocation" placeholder="请选择收货地址">
+      </el-cascader>
+      </el-form-item>
+      <el-form-item prop="address" label="详细地址：" >
+        <el-input v-model="form.address" placeholder="请填写详细地址" />
       </el-form-item>
     </el-form>
     
@@ -476,7 +529,9 @@ const cancel = () => {
   align-items: center;
   cursor: auto;
   position: relative;
-  i{
+
+  i,
+  a{
     position: absolute;
     right: 10px;
     cursor: pointer;
