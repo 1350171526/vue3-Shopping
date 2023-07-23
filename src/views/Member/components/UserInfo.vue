@@ -24,7 +24,7 @@ onMounted(() => getLikeList())
       <h4>{{ userStore.userInfo?.account }}</h4>
     </div>
     <div class="item">
-      <a href="javascript:;">
+      <a href="javascript:;" @click="$router.push('/member/person')">
         <span class="iconfont icon-hy"></span>
         <p>会员中心</p>
       </a>

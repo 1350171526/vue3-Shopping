@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router';
 import { useCartStore }from '@/stores/cartStore'
 import { useGetAddressStore } from '@/stores/getAddressStore'
 const useGetAddress = useGetAddressStore()
-
 import Address from './components/Address.vue'
 
 const cartStore = useCartStore()
@@ -15,6 +14,9 @@ const checkInfo = ref({})  // 订单对象
 const getCheckoutInfo = async () =>{
   const res = await getCheckoutInfoAPI()
   checkInfo.value = res.result
+  // 更新购物车
+  if(!cartStore.cartList)
+  await cartStore.updateNewList()
 }
 onMounted(()=> getCheckoutInfo())
 
@@ -48,8 +50,7 @@ const createOrder = async () => {
       id: orderId
     }
   })
-  // 更新购物车
-  cartStore.updateNewList()
+
 }
 
 

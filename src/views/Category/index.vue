@@ -2,9 +2,15 @@
 import GoodsItem from '@/views/Home/components/GoodsItem.vue'
 import { useBanner } from './composables/useBanner'
 import { useCategory } from './composables/useCategory';
+import { useCartStore } from '@/stores/cartStore'
+import { onMounted } from 'vue';
+const cartStore = useCartStore()
 const { bannerList } = useBanner()
 const { categoryData } = useCategory()
-
+onMounted(()=> {
+  if(!cartStore.cartList)
+  cartStore.updateNewList()
+})
 
 </script>
 

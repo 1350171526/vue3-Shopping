@@ -1,7 +1,8 @@
 <script setup>
 import { useCartStore } from '@/stores/cartStore'
+import { onMounted } from 'vue';
 const cartStore = useCartStore()
-
+onMounted(()=> cartStore.updateNewList())
 // 单选回调
 const singleCheck = (i,selected) =>{
   cartStore.singleCheck(i.skuId,selected)
