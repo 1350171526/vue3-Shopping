@@ -1,6 +1,6 @@
 <script setup>
 import { addAddressAPI,delAddressAPI,reviseAddressAPI, getAddressAPI } from '@/apis/checkout'
-import { onMounted, ref, computed,toRaw } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { regionData,codeToText  } from 'element-china-area-data'
 
 
@@ -9,10 +9,14 @@ const addressInfo = ref({})
 const curAddress = ref({})
 const getAddress = async () =>{
   const res = await getAddressAPI()
+  
   addressInfo.value = res.result
+  // console.log(addressInfo.value);
   // 适配默认地址 从地址列表筛选出来 isdefault ===0 的项
   const item = addressInfo.value.find(item => item.isDefault === 0)
   curAddress.value = item
+  // console.log(res.result.reverse());
+  
 }
 onMounted(() => getAddress())
 // 子组件向父组件传值
@@ -21,14 +25,13 @@ onMounted(() => getAddress())
 const showDialog = ref(false)
 const formRef = ref(null)
 const addFlag = ref(false)
-const reviseFlag = ref(false)
+const title4 = ref()
+// const reviseFlag = ref(false)
 
 // 切换地址
 const activeAddress = ref({})
-const switchAddress = async (item) => {
-  // await getCheckoutInfo()
-  // await getAddress()
-  activeAddress.value = item
+const switchAddress = (item) => {
+  activeAddress.value = item  
 
 }
 const comfirm = () =>{
@@ -38,6 +41,10 @@ const comfirm = () =>{
 }
 
 // 添加地址
+const addButton = () =>{
+  addFlag.value = true
+  title4.value = '添加收货地址'
+}
 const form = ref({
   receiver: '',
   contact: '',
@@ -70,9 +77,9 @@ const rules = {
 }
 const addAddress = async () => {
   // console.log(cityList);
-  console.log(form.value.fullLocation);
+  // console.log(form.value.fullLocation);
   const temp = computed(() => {
-  console.log(form.value.fullLocation);
+  // console.log(form.value.fullLocation);
 
     // Array.from()方法可以将proxy对象转化为数组！！！
     const temp1 = Array.from(form.value.fullLocation)
@@ -81,13 +88,13 @@ const addAddress = async () => {
   })
   const provinceCode = form.value.fullLocation[0] * 10000
   const cityCode = form.value.fullLocation[1] * 100
-
+  if (!formRef) return
   // console.log(typeof(checkInfo.value.userAddresses[6].fullLocation));
   formRef.value.validate(async (valid) =>{
     // valid 表示所有的表单全部为验证通过 才为true
     
     if (valid) {
-      await addAddressAPI({
+      const res = await addAddressAPI({
       receiver: form.value.receiver,
       contact: form.value.contact,
       provinceCode: provinceCode,
@@ -101,8 +108,8 @@ const addAddress = async () => {
     })
     await getAddress()
     // orderId = res.result.id
-    curAddress.value = addressInfo.value[0]
-    curAddress.value.fullLocation = temp.value
+    curAddress.value = addressInfo.value.find(item => item.id = res.result.id)
+    // curAddress.value.fullLocation = temp.value
     // console.log(orderId);
     addFlag.value = false
     form.value = {}
@@ -115,14 +122,41 @@ const delAdress = async (id) => {
   await delAddressAPI(id)
   await getAddress()
 }
-// 取消添加地址
+// 取消添加或修改地址
 const cancel = () => {
   form.value = {}
   addFlag.value = false
 }
 
-// 修改地址
+// 修改地址(没有使用修改地址接口  使用了删除和添加地址接口)
+const reviseAddress = (item) => {
+  // reviseFlag.value = true
+  addFlag.value = true
+  title4.value = '修改收货地址'
+  const provinceCode = String(item.provinceCode/10000) 
+  const cityCode = String(item.cityCode/100)
+  const countyCode = item.countyCode
+  form.value.receiver = item.receiver
+  form.value.contact = item.contact
+  form.value.address = item.address
+  form.value.postalCode = item.postalCode
+  form.value.addressTags = item.addressTags
+  form.value.fullLocation = [provinceCode,cityCode,countyCode]
+  // console.log(form.value.fullLocation);
+  // console.log(curAddress.value.id);
+}
+const confirmReAddress = async (id) => {
+  // await getAddress()
+  // console.log(id);
+  await delAdress(id)
+  await addAddress()
+}
 
+
+// 关闭弹框时执行函数
+const handleClose = () =>{
+  form.value = {}
+}
 </script>
 
 <template>
@@ -143,7 +177,7 @@ const cancel = () => {
             </div>
             <div class="action">
               <el-button size="large" @click="showDialog = true">切换地址</el-button>
-              <el-button size="large" @click="addFlag = true">添加地址</el-button>
+              <el-button size="large" @click="addButton">添加地址</el-button>
             </div>
           </div>
         </div>
@@ -154,17 +188,16 @@ const cancel = () => {
 <!--切换地址-->
 <el-dialog v-model="showDialog" title="切换收货地址" width="30%" center>
   <div class="addressWrapper">
-    <div class="text item" :class="{ active:activeAddress.id === item.id }" @click="switchAddress(item)" v-for="item in addressInfo"  :key="item.id">
+    <div class="text item" :class="{ active:activeAddress.id === item.id }" @click="switchAddress(item)" v-for="item in addressInfo"  :key="item.id" >
       <ul>
       <li><span>收<i />货<i />人：</span>{{ item.receiver }} </li>
       <li><span>联系方式：</span>{{ item.contact }}</li>
       <li><span>收货地址：</span>{{ item.fullLocation }} {{ item.address }}</li>
       
       </ul>
-      <a>修改地址</a>
+      <a @click="reviseAddress(item)">修改地址</a>
       <i class="iconfont icon-close-new" @click="delAdress(item.id)"></i>
     </div>
-    
   </div>
   <template #footer>
     <span class="dialog-footer">
@@ -174,8 +207,12 @@ const cancel = () => {
   </template>
 </el-dialog>
 
-<!-- 添加地址 -->
-<el-dialog v-model="addFlag" title="添加收货地址" width="30%" center>
+<!-- 添加/修改地址 -->
+<!-- :before-close绑定 可以再用户点击关闭按钮或者对话框遮罩区域"前"被调用 -->
+<!-- :onClose绑定 可以再用户点击关闭按钮或者对话框遮罩区域"时"被调用 -->
+<!-- :close-on-click-modal 点击遮罩层是否关闭对话框 -->
+<!-- 官方文档推荐使用:header="title" 不推荐使用:title="title" -->
+<el-dialog v-model="addFlag" :title="title4" width="30%" :onClose="handleClose" :close-on-click-modal="false" center>
     <el-form :model="form" ref="formRef" :rules="rules" label-width="120px">
       <el-form-item prop="receiver" label="收货人：" >
         <el-input v-model="form.receiver" placeholder="请填写收货人" />
@@ -198,7 +235,7 @@ const cancel = () => {
       
       <el-form-item prop="fullLocation" label="收货地址：" >
         <el-cascader size="large" :options="regionData" v-model="form.fullLocation" placeholder="请选择收货地址">
-      </el-cascader>
+        </el-cascader>
       </el-form-item>
       <el-form-item prop="address" label="详细地址：" >
         <el-input v-model="form.address" placeholder="请填写详细地址" />
@@ -208,12 +245,10 @@ const cancel = () => {
   <template #footer>
     <span class="dialog-footer">
       <el-button @click="cancel">取消</el-button>
-      <el-button type="primary" @click="addAddress">确定</el-button>
+      <el-button type="primary" @click="title4=='添加收货地址'? addAddress() : confirmReAddress(activeAddress.id)">确定</el-button>
     </span>
   </template>
 </el-dialog>
-
-
 </template>
 
 <style lang="scss" scoped>
