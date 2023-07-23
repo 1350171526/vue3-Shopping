@@ -12,19 +12,6 @@ const cartStore = useCartStore()
 const router = useRouter()
 const checkInfo = ref({})  // 订单对象
 
-// const curAddress = ref({})
-// const addressInfo = ref({})
-
-// const getAddress = async () =>{
-//   const res = await getAddressAPI()
-//   addressInfo.value = res.result
-//   // 适配默认地址 从地址列表筛选出来 isdefault ===0 的项
-//   const item = addressInfo.value.find(item => item.isDefault === 0)
-//   curAddress.value = item
-// }
-// onMounted(() => getAddress())
-
-
 const getCheckoutInfo = async () =>{
   const res = await getCheckoutInfoAPI()
   checkInfo.value = res.result

@@ -1,5 +1,5 @@
 <script setup>
-import { addAddressAPI,delAddressAPI,reviseAddressAPI, getAddressAPI } from '@/apis/checkout'
+import { addAddressAPI,delAddressAPI, getAddressAPI } from '@/apis/checkout'
 import { onMounted, ref, computed } from 'vue';
 import { regionData,codeToText  } from 'element-china-area-data'
 

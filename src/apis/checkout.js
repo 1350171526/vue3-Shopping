@@ -34,13 +34,13 @@ export const delAddressAPI = (id) => {
 }
 
 // 修改地址
-export const reviseAddressAPI = (id,data) => {
-  return request({
-    url: `/member/address/${id}`,
-    method: 'PUT',
-    data
-  })
-}
+// export const reviseAddressAPI = (id,data) => {
+//   return request({
+//     url: `/member/address/${id}`,
+//     method: 'PUT',
+//     data
+//   })
+// }
 
 // 获取地址
 export const getAddressAPI = () => {
