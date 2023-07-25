@@ -16,6 +16,7 @@ import Member from '@/views/Member/index.vue'
 import UserInfo from '@/views/Member/components/UserInfo.vue'
 import UserOrder from '@/views/Member/components/UserOrder.vue'
 import Person from '@/views/Member/components/Person.vue'
+import MyAddress from '@/views/Member/components/MyAddress.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -71,6 +72,10 @@ const router = createRouter({
           {
             path: 'person',
             component: Person
+          },
+          {
+            path: 'myaddress',
+            component: MyAddress
           }
         ]
       }

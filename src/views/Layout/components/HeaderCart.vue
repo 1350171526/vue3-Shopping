@@ -7,7 +7,10 @@ const cartStore = useCartStore()
 // const toCartList = () => {
 //   router.push('/cartlist')
 // }
-onMounted(() => cartStore.updateNewList())
+onMounted(async() =>{
+    // 更新购物车
+    await cartStore.updateNewList()
+})
 
 </script>
 

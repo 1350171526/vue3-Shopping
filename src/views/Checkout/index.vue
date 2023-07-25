@@ -4,8 +4,8 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router'; 
 import { useCartStore }from '@/stores/cartStore'
 import { useGetAddressStore } from '@/stores/getAddressStore'
+
 const useGetAddress = useGetAddressStore()
-import Address from './components/Address.vue'
 
 const cartStore = useCartStore()
 const router = useRouter()
@@ -22,12 +22,12 @@ onMounted(()=> getCheckoutInfo())
 
 // 创建订单
 const createOrder = async () => {
-  if(!JSON.parse(JSON.stringify(useGetAddress.curAddress)).id){
-    await useGetAddress.getAddress()
-  }
+  // if(!JSON.parse(JSON.stringify(useGetAddress.activeAddress)).id){
+  //   await useGetAddress.getAddress()
+  // }
   
-  const id  = JSON.parse(JSON.stringify(useGetAddress.curAddress)).id
-  
+  const id  = useGetAddress.curAddress.id
+  console.log(id);
   const res = await createOrderAPI({
     deliveryTimeType: 1,
     payType: 1,

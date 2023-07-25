@@ -12,9 +12,10 @@ export const useGetAddressStore = defineStore('address', () => {
     const item = addressInfo.value.find(item => item.isDefault === 0)
     curAddress.value = item
     }
+
     return{
       curAddress,
       getAddress,
-      addressInfo
+      addressInfo,
     }
 })
