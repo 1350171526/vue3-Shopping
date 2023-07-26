@@ -1,6 +1,9 @@
 <script setup>
 import { useCartStore } from '@/stores/cartStore'
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus'
+const router = useRouter()
 const cartStore = useCartStore()
 onMounted(()=> cartStore.updateNewList())
 // 单选回调
@@ -11,6 +14,17 @@ const singleCheck = (i,selected) =>{
 // 全选回调
 const allCheck = (selected) => {
   cartStore.allCheck(selected)
+}
+
+// 点击结算
+const checkout = () => {
+  if(cartStore.cartList.length===0){
+    ElMessage.warning('无有效商品！')
+    return
+  }else{
+    router.push('/checkout')
+  }
+  
 }
 </script>
 
@@ -86,7 +100,7 @@ const allCheck = (selected) => {
           <span class="red">¥ {{ cartStore.selectedPrice.toFixed(2) }} </span>
         </div>
         <div class="total">
-          <el-button size="large" type="primary" @click="$router.push('/checkout')">下单结算</el-button>
+          <el-button size="large" type="primary" @click=checkout()>下单结算</el-button>
         </div>
       </div>
     </div>
