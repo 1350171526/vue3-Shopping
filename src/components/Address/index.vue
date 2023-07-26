@@ -114,7 +114,7 @@ const addAddress = async () => {
       useGetAddress.curAddress = resp.result.find(item => item.id = res.result.id)
       addFlag.value = false
       form.value = {}
-    }).catch(()=>{})   
+    }).catch(()=>{return})   
     
     }
   })
