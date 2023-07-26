@@ -8,7 +8,6 @@ const cartStore = useCartStore()
 const { bannerList } = useBanner()
 const { categoryData } = useCategory()
 onMounted(()=> {
-  if(!cartStore.cartList)
   cartStore.updateNewList()
 })
 

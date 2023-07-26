@@ -80,22 +80,23 @@ const rules = {
 const addAddress = async () => {
   // console.log(cityList);
   // console.log(form.value.fullLocation);
-  const temp = computed(() => {
-  // console.log(form.value.fullLocation);
-
-    // Array.from()方法可以将proxy对象转化为数组！！！
-    const temp1 = Array.from(form.value.fullLocation)
-    const temp2 = temp1.map((item) => codeToText[item]).join(" ")
-    return temp2
-  })
-  const provinceCode = form.value.fullLocation[0] * 10000
-  const cityCode = form.value.fullLocation[1] * 100
+  
   if (!formRef) return
   // console.log(typeof(checkInfo.value.userAddresses[6].fullLocation));
-  formRef.value.validate(async (valid) =>{
+  await formRef.value.validate(async (valid) =>{
     // valid 表示所有的表单全部为验证通过 才为true
     
     if (valid) {
+      const temp = computed(() => {
+      // console.log(form.value.fullLocation);
+
+        // Array.from()方法可以将proxy对象转化为数组！！！
+        const temp1 = Array.from(form.value.fullLocation)
+        const temp2 = temp1.map((item) => codeToText[item]).join(" ")
+        return temp2
+      })
+      const provinceCode = form.value.fullLocation[0] * 10000
+      const cityCode = form.value.fullLocation[1] * 100
       const res = await addAddressAPI({
       receiver: form.value.receiver,
       contact: form.value.contact,
@@ -107,12 +108,14 @@ const addAddress = async () => {
       addressTags: form.value.addressTags,
       isDefault: 1,
       fullLocation: temp.value
-    })
-    // await getAddress()
-    const resp = await getAddressAPI()
-    useGetAddress.curAddress = resp.result.find(item => item.id = res.result.id)
-    addFlag.value = false
-    form.value = {}
+    }).then(async ()=>{
+      // await getAddress()
+      const resp = await getAddressAPI()
+      useGetAddress.curAddress = resp.result.find(item => item.id = res.result.id)
+      addFlag.value = false
+      form.value = {}
+    }).catch(()=>{})   
+    
     }
   })
 }
@@ -123,9 +126,11 @@ const delAdress = async (id) => {
   await getAddress()
 }
 // 取消添加或修改地址
-const cancel = () => {
+const cancel = (formRef) => {
   form.value = {}
   addFlag.value = false
+  if (!formRef) return
+  formRef.resetFields()
 }
 
 // 修改地址(没有使用修改地址接口  使用了删除和添加地址接口)
@@ -244,7 +249,7 @@ const handleClose = () =>{
     
   <template #footer>
     <span class="dialog-footer">
-      <el-button @click="cancel">取消</el-button>
+      <el-button @click="cancel(formRef)">取消</el-button>
       <el-button type="primary" @click="title4=='添加收货地址'? addAddress() : confirmReAddress(activeAddress.id)">确定</el-button>
     </span>
   </template>

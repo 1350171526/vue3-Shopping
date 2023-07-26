@@ -15,7 +15,6 @@ const getCheckoutInfo = async () =>{
   const res = await getCheckoutInfoAPI()
   checkInfo.value = res.result
   // 更新购物车
-  if(!cartStore.cartList)
   await cartStore.updateNewList()
 }
 onMounted(()=> getCheckoutInfo())
