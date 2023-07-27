@@ -2,13 +2,10 @@
 import { addAddressAPI,delAddressAPI, getAddressAPI } from '@/apis/checkout'
 import { onMounted, ref, computed } from 'vue';
 import { regionData,codeToText  } from 'element-china-area-data'
-import { useGetAddressStore } from '@/stores/getAddressStore'
-
-const useGetAddress = useGetAddressStore()
 
 // 获取地址
 const addressInfo = ref({})
-// const curAddress = ref({})
+const curAddress = ref({})
 const getAddress = async () =>{
   const res = await getAddressAPI()
   
@@ -16,7 +13,7 @@ const getAddress = async () =>{
   // console.log(addressInfo.value);
   // 适配默认地址 从地址列表筛选出来 isdefault ===0 的项
   const item = addressInfo.value.find(item => item.isDefault === 0)
-  useGetAddress.curAddress = item
+  curAddress.value = item
   // console.log(res.result[0]);
   
 }
@@ -37,7 +34,7 @@ const switchAddress = (item) => {
   activeAddress.value = item
 }
 const comfirm = () =>{
-  useGetAddress.curAddress =activeAddress.value
+  curAddress.value =activeAddress.value
   showDialog.value =false
   activeAddress.value = {}
 }
@@ -111,7 +108,7 @@ const addAddress = async () => {
     }).then(async ()=>{
       // await getAddress()
       const resp = await getAddressAPI()
-      useGetAddress.curAddress = resp.result.find(item => item.id = res.result.id)
+      curAddress.value = resp.result.find(item => item.id = res.result.id)
       addFlag.value = false
       form.value = {}
     }).catch(()=>{return})   
@@ -162,6 +159,10 @@ const confirmReAddress = async (id) => {
 const handleClose = () =>{
   form.value = {}
 }
+
+defineExpose({
+  curAddress
+})
 </script>
 
 <template>
@@ -173,11 +174,11 @@ const handleClose = () =>{
         <div class="box-body">
           <div class="address">
             <div class="text">
-              <div class="none" v-if="!useGetAddress.curAddress">您需要先添加收货地址才可提交订单。</div>
+              <div class="none" v-if="!curAddress">您需要先添加收货地址才可提交订单。</div>
               <ul v-else>
-                <li><span>收<i />货<i />人：</span>{{ useGetAddress.curAddress.receiver }}</li>
-                <li><span>联系方式：</span>{{ useGetAddress.curAddress.contact }}</li>
-                <li><span>收货地址：</span>{{ useGetAddress.curAddress.fullLocation }} {{ useGetAddress.curAddress.address }}</li>
+                <li><span>收<i />货<i />人：</span>{{ curAddress.receiver }}</li>
+                <li><span>联系方式：</span>{{ curAddress.contact }}</li>
+                <li><span>收货地址：</span>{{ curAddress.fullLocation }} {{ curAddress.address }}</li>
               </ul>
             </div>
             <div class="action">

@@ -3,10 +3,8 @@ import { getCheckoutInfoAPI,createOrderAPI } from '@/apis/checkout'
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router'; 
 import { useCartStore }from '@/stores/cartStore'
-import { useGetAddressStore } from '@/stores/getAddressStore'
 
-const useGetAddress = useGetAddressStore()
-
+const curAdd = ref(null)
 const cartStore = useCartStore()
 const router = useRouter()
 const checkInfo = ref({})  // 订单对象
@@ -21,11 +19,7 @@ onMounted(()=> getCheckoutInfo())
 
 // 创建订单
 const createOrder = async () => {
-  // if(!JSON.parse(JSON.stringify(useGetAddress.activeAddress)).id){
-  //   await useGetAddress.getAddress()
-  // }
-  
-  const id  = useGetAddress.curAddress.id
+  const id  = curAdd.value.curAddress.id
   console.log(id);
   const res = await createOrderAPI({
     deliveryTimeType: 1,
@@ -61,7 +55,7 @@ const createOrder = async () => {
       <!-- <address  /> -->
       <div class="wrapper">
         <!-- 收货地址 -->
-        <Address />
+        <Address ref="curAdd"/>
         <!-- 商品信息 -->
         <h3 class="box-title">商品信息</h3>
         <div class="box-body">
