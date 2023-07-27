@@ -21,8 +21,11 @@ const getGoods = async (id = route.params.id) => {
   const res = await getDetail(id)
   
   goods.value = res.result
+  document.title = goods.value.name + '-小兔鲜儿'
 }
-onMounted(() => getGoods())
+onMounted(() => {
+  getGoods()
+})
 
 let skuObj = {}
 const skuChange = (sku) => {
@@ -60,8 +63,8 @@ onBeforeRouteUpdate((to) => {
 })
 </script>
 <template>
-  <div class="xtx-goods-page">
-    <div class="container" v-if="goods.details">
+  <div class="xtx-goods-page" >
+    <div class="container" v-if="goods.details" >
       <div class="bread-container">
         <el-breadcrumb separator=">">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>

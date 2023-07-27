@@ -27,7 +27,10 @@ const router = createRouter({
     children:[
       {
         path: '',
-        component: Home
+        component: Home,
+        meta:{
+          title: '首页-'
+        }
       },
       {
         path: 'category/:id',
@@ -43,15 +46,24 @@ const router = createRouter({
       },
       {
         path: 'cartlist',
-        component: CartList
+        component: CartList,
+        meta:{
+          title: '购物车-'
+        }
       },
       {
         path: 'checkout',
-        component: Checkout
+        component: Checkout,
+        meta:{
+          title: '结算-'
+        }
       },
       {
         path: 'pay',
-        component: Pay
+        component: Pay,
+        meta:{
+          title: '支付-'
+        }
       },
       {
         path: 'paycallback',
@@ -63,19 +75,31 @@ const router = createRouter({
         children:[
           {
             path: '',
-            component: UserInfo
+            component: UserInfo,
+            meta:{
+              title: '个人中心-'
+            }
           },
           {
             path: 'order',
-            component: UserOrder
+            component: UserOrder,
+            meta:{
+              title: '我的订单'
+            }
           },
           {
             path: 'person',
-            component: Person
+            component: Person,
+            meta:{
+              title: '会员中心-'
+            }
           },
           {
             path: 'myaddress',
-            component: MyAddress
+            component: MyAddress,
+            meta:{
+              title: '地址管理-'
+            }
           }
         ]
       }
@@ -83,7 +107,10 @@ const router = createRouter({
    },
    {
     path: '/login',
-    component: Login
+    component: Login,
+    meta:{
+      title: '登录-'
+    }
    }
   ],
   // 路由行为配置项 （切换路由时滚动条切换到最上方）
@@ -92,6 +119,10 @@ const router = createRouter({
       top: 0
     }
   }
+})
+router.beforeEach(async(to, from) => {
+  const title = (to.meta.title ? to.meta.title : '') + '小兔鲜儿'
+  document.title = title
 })
 
 export default router
