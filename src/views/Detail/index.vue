@@ -27,9 +27,9 @@ onMounted(() => {
   getGoods()
 })
 
-let skuObj = {}
+let skuObj = ref({})
 const skuChange = (sku) => {
-  skuObj = sku
+  skuObj.value = sku
 }
 
 // count
@@ -40,7 +40,7 @@ const countChange = (count) =>{
 
 // 添加购物车
 const addCart =()=>{
-  if(skuObj.skuId){
+  if(skuObj.value.skuId){
     // 规格已经选择 触发action
     cartStore.addCart({
       id: goods.value.id,
@@ -48,8 +48,8 @@ const addCart =()=>{
       picture: goods.value.mainPictures[0],
       price: goods.value.price,
       count: count.value,
-      skuId: skuObj.skuId,
-      attrsText: skuObj.spaceText,
+      skuId: skuObj.value.skuId,
+      attrsText: skuObj.value.spaceText,
       aelected: true,
     })
   }else{
@@ -117,9 +117,12 @@ onBeforeRouteUpdate((to) => {
               <!-- 商品信息区 -->
               <p class="g-name"> {{ goods.name }} </p>
               <p class="g-desc">{{ goods.desc }} </p>
+              <p class="g-desc" v-if="skuObj.specsText">{{ skuObj.specsText }}</p>
               <p class="g-price">
-                <span>{{ goods.price }}</span>
-                <span> {{ goods.oldPrice }}</span>
+                <span v-if="skuObj.price">{{ skuObj.price }}</span>
+                <span v-else>{{ goods.price }}</span>
+                <span v-if="skuObj.oldPrice"> {{ skuObj.oldPrice }}</span>
+                <span v-else> {{ goods.oldPrice }}</span>
               </p>
               <div class="g-service">
                 <dl>
