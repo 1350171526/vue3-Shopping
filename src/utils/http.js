@@ -19,7 +19,7 @@ httpInstance.interceptors.request.use(config => {
     const token = userStore.userInfo.token
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-    }
+    } 
     return config
   }, e => Promise.reject(e))
 
@@ -37,6 +37,7 @@ httpInstance.interceptors.response.use(res => res.data, e=> {
       userStore.clearUserInfo()
       router.push('/login')
     }
+    console.log(e.response.status);
     return Promise.reject(e)
 })
 export default httpInstance

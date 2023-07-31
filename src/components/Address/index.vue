@@ -105,13 +105,12 @@ const addAddress = async () => {
       addressTags: form.value.addressTags,
       isDefault: 1,
       fullLocation: temp.value
-    }).then(async ()=>{
-      // await getAddress()
-      const resp = await getAddressAPI()
+    })
+      await getAddress()
       curAddress.value = resp.result.find(item => item.id = res.result.id)
       addFlag.value = false
       form.value = {}
-    }).catch(()=>{return})   
+
     
     }
   })

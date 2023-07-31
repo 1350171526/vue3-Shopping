@@ -14,7 +14,7 @@
     </dl>
   </div>
 </template>
-<script>
+<script setup>
 import { watchEffect } from 'vue'
 import getPowerSet from './power-set'
 const spliter = '★'
@@ -45,7 +45,7 @@ const getPathMap = (skus) => {
 }
 
 // 初始化禁用状态
-function initDisabledStatus (specs, pathMap) {
+const initDisabledStatus = (specs, pathMap) => {
   if (specs && specs.length > 0) {
     specs.forEach(spec => {
       spec.values.forEach(val => {
@@ -89,17 +89,17 @@ const updateDisabledStatus = (specs, pathMap) => {
 }
 
 
-export default {
-  name: 'XtxGoodSku',
-  props: {
+
+  
+  const props = defineProps({
     // specs:所有的规格信息  skus:所有的sku组合
     goods: {
       type: Object,
-      default: () => ({ specs: [], skus: [] })
+      default: () => ({ specs: [], skus: [] }),
+      name: 'XtxGoodSku',
     }
-  },
-  emits: ['change'],
-  setup (props, { emit }) {
+  })
+  const emit = defineEmits(['change'])
     let pathMap = {}
     watchEffect(() => {
       // 得到所有字典集合
@@ -140,9 +140,9 @@ export default {
         emit('change', {})
       }
     }
-    return { clickSpecs }
-  }
-}
+    // return { clickSpecs }
+  
+
 </script>
 
 <style scoped lang="scss">

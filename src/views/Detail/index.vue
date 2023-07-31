@@ -119,6 +119,7 @@ onBeforeRouteUpdate((to) => {
               <p class="g-desc">{{ goods.desc }} </p>
               <p class="g-desc" v-if="skuObj.specsText">{{ skuObj.specsText }}</p>
               <p class="g-price">
+                单价:
                 <span v-if="skuObj.price">{{ skuObj.price }}</span>
                 <span v-else>{{ goods.price }}</span>
                 <span v-if="skuObj.oldPrice"> {{ skuObj.oldPrice }}</span>
