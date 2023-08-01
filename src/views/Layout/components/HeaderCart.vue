@@ -7,16 +7,18 @@ const cartStore = useCartStore()
 // const toCartList = () => {
 //   router.push('/cartlist')
 // }
-onMounted(async() =>{
+onMounted(() =>{
     // 更新购物车
-    await cartStore.updateNewList()
+    if(cartStore.isLogin){
+    cartStore.updateNewList()
+  }
 })
 
 </script>
 
 <template>
   <div class="cart">
-    <a class="curr" href="javascript:;">
+    <a class="curr" @click="$router.push('/cartlist')">
       <i class="iconfont icon-cart"></i><em>{{ cartStore.cartList.length }}</em>
     </a>
     <div class="layer">

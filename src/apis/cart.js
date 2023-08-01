@@ -38,3 +38,15 @@ export const insertCartAPI = ({ skuId, count }) => {
       data
     })
   }
+
+  // 修改购物车商品
+  export const reviseCartAPI = ({id,count,selected}) =>{
+    return request({
+      url: `/member/cart/${id}`,
+      method: 'PUT',
+      data:{
+        count,
+        selected
+      }
+    })
+  }

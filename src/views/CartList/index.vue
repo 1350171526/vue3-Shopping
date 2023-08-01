@@ -5,7 +5,11 @@ import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus'
 const router = useRouter()
 const cartStore = useCartStore()
-onMounted(()=> cartStore.updateNewList())
+onMounted(()=> {
+  if(cartStore.isLogin){
+    cartStore.updateNewList()
+  }
+})
 // 单选回调
 const singleCheck = (i,selected) =>{
   cartStore.singleCheck(i.skuId,selected)
@@ -26,6 +30,16 @@ const checkout = () => {
   }
   
 }
+
+// 修改数量
+const handleChange = (i) => {
+  cartStore.adviseCart({
+    id: i.skuId,
+    count: i.count,
+    selected: i.selected
+  })
+}
+
 </script>
 
 <template>
@@ -65,7 +79,7 @@ const checkout = () => {
                 <p>&yen;{{ i.price }}</p>
               </td>
               <td class="tc">
-                <el-input-number v-model="i.count" />
+                <el-input-number v-model="i.count" @change="handleChange(i)"/>
               </td>
               <td class="tc">
                 <p class="f16 red">&yen;{{ (i.price * i.count).toFixed(2) }}</p>

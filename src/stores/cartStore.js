@@ -3,7 +3,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useUserStore } from './userStore'
-import { insertCartAPI, findNewCartListAPI,delCartAPI } from '@/apis/cart'
+import { insertCartAPI, findNewCartListAPI,delCartAPI,reviseCartAPI } from '@/apis/cart'
 
 export const useCartStore = defineStore('cart', () => {
   const useStore = useUserStore()
@@ -41,6 +41,15 @@ export const useCartStore = defineStore('cart', () => {
     
   }
 
+// 修改购物车内容
+const adviseCart = async(goods) => {
+  const {id,count,selected} = goods
+  if(isLogin.value){
+    await reviseCartAPI({id,count,selected})
+  }
+}
+
+
 // 删除购物车
   const delCart = async (skuId) =>{
     if(isLogin.value){
@@ -69,11 +78,11 @@ export const useCartStore = defineStore('cart', () => {
   const allPrice = computed(()=> cartList.value.reduce((a,c) => a+c.count*c.price,0))
 
 // 单选框双向绑定功能
-  const singleCheck = (skuId,selected) =>{
+  const singleCheck = async(skuId,selected) =>{
     // 通过skuId找到修改的那一项 然后把他的selected修改为传过来的selected
     const item = cartList.value.find((item) => item.skuId === skuId)
-    // console.log(item);
     item.selected = selected
+    await reviseCartAPI({id:skuId,selected,count:item.count})
   }
 
   // isAll是否全选
@@ -81,7 +90,10 @@ export const useCartStore = defineStore('cart', () => {
 
   // 全选功能
   const allCheck = (selected) => {
-    cartList.value.forEach(item => item.selected = selected)
+    cartList.value.forEach(async(item) => {
+      item.selected = selected
+      await reviseCartAPI({id:item.skuId,selected:item.selected,count:item.count})
+    })
   }
 
   // 已选择数量
@@ -102,8 +114,8 @@ export const useCartStore = defineStore('cart', () => {
     selectedPrice,
     clearCart,
     updateNewList,
-    isLogin
-
+    isLogin,
+    adviseCart
   }
 }, {
     // 持久化存储

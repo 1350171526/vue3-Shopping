@@ -23,7 +23,9 @@ onBeforeRouteUpdate((to) => {
     getCategory(to.params.id)
 })
 onMounted(()=> {
-  cartStore.updateNewList()
+  if(cartStore.isLogin){
+    cartStore.updateNewList()
+  }
   getCategory()
 })
 
