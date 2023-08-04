@@ -14,11 +14,6 @@ import { lazyPlugin } from './directives'
 // 引入全局组件插件
 import { componentPlugin } from '@/components'
 
-// 测试接口函数
-// import { getCategory } from '@/apis/testAPI'
-// getCategory().then(res =>{
-//     console.log(res);
-// })
 const app = createApp(App)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)

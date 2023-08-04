@@ -66,7 +66,7 @@ onMounted(() =>{
     text-align: center;
     position: relative;
     display: block;
-
+    cursor: pointer;
     .icon-cart {
       font-size: 22px;
     }

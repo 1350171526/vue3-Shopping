@@ -2,31 +2,21 @@
 import GoodsItem from '@/views/Home/components/GoodsItem.vue'
 import { useBanner } from './composables/useBanner'
 import { useCartStore } from '@/stores/cartStore'
-import { onMounted,ref } from 'vue';
-import { getCategoryAPI } from '@/apis/category';
-import { useRoute } from 'vue-router';
-import { onBeforeRouteUpdate } from 'vue-router';
+import { onMounted } from 'vue';
+import { useCategory } from './composables/useCategory'
 
-
+const { categoryData } = useCategory()
 const cartStore = useCartStore()
 const { bannerList } = useBanner()
 
-const categoryData = ref({})
-    const route = useRoute()
-    const getCategory = async (id = route.params.id) => {
-    const res = await getCategoryAPI(id)
-    categoryData.value = res.result
-    document.title = categoryData.value.name + '-小兔鲜儿'
-  }
-// 路由参数变化的时候 可以把分类数据接口重新发送
-onBeforeRouteUpdate((to) => {
-    getCategory(to.params.id)
-})
+
+
+
+
 onMounted(()=> {
   if(cartStore.isLogin){
     cartStore.updateNewList()
   }
-  getCategory()
 })
 
 </script>

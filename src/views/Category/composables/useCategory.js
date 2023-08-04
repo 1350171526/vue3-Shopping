@@ -13,6 +13,7 @@ export function useCategory(){
     const getCategory = async (id = route.params.id) => {
         const res = await getCategoryAPI(id)
         categoryData.value = res.result
+        document.title = categoryData.value.name + '-小兔鲜儿'
     }
     onMounted(() => getCategory())
 

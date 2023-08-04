@@ -84,7 +84,7 @@ const router = createRouter({
             path: 'order',
             component: UserOrder,
             meta:{
-              title: '我的订单'
+              title: '我的订单-'
             }
           },
           {

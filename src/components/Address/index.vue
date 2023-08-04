@@ -106,7 +106,7 @@ const addAddress = async () => {
       isDefault: 1,
       fullLocation: temp.value
     })
-      await getAddress()
+      const resp = await getAddress()
       curAddress.value = resp.result.find(item => item.id = res.result.id)
       addFlag.value = false
       form.value = {}

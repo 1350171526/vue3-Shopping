@@ -82,7 +82,10 @@ const adviseCart = async(goods) => {
     // 通过skuId找到修改的那一项 然后把他的selected修改为传过来的selected
     const item = cartList.value.find((item) => item.skuId === skuId)
     item.selected = selected
-    await reviseCartAPI({id:skuId,selected,count:item.count})
+    if(isLogin.value){
+      await reviseCartAPI({id:skuId,selected,count:item.count})
+    }
+    
   }
 
   // isAll是否全选
@@ -92,7 +95,10 @@ const adviseCart = async(goods) => {
   const allCheck = (selected) => {
     cartList.value.forEach(async(item) => {
       item.selected = selected
-      await reviseCartAPI({id:item.skuId,selected:item.selected,count:item.count})
+      if(isLogin.value){
+        await reviseCartAPI({id:item.skuId,selected:item.selected,count:item.count})
+      }
+      
     })
   }
 

@@ -22,6 +22,7 @@ const getFilterData = async (id = route.params.id) => {
   const res = await getCategoryFilterAPI(id)
   filterData.value = res.result
   goodList.value = res.result.goods
+  document.title = filterData.value.name + '-小兔鲜儿'
 }
 
 onMounted(() => getFilterData())
