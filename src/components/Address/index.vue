@@ -106,12 +106,10 @@ const addAddress = async () => {
       isDefault: 1,
       fullLocation: temp.value
     })
-      const resp = await getAddress()
-      curAddress.value = resp.result.find(item => item.id = res.result.id)
+      await getAddress()
+      curAddress.value = addressInfo.value.find(item => item.id = res.result.id)
       addFlag.value = false
       form.value = {}
-
-    
     }
   })
 }
@@ -165,9 +163,9 @@ defineExpose({
 </script>
 
 <template>
-<div class="xtx-pay-checkout-page">
+<!-- <div class="xtx-pay-checkout-page">
   <div class="container">
-    <div class="wrapper">
+    <div class="wrapper"> -->
       <!-- 收货地址 -->
       <h3 class="box-title">收货地址</h3>
         <div class="box-body">
@@ -186,9 +184,9 @@ defineExpose({
             </div>
           </div>
         </div>
-    </div>
+    <!-- </div>
   </div>
-</div>
+</div> -->
 
 <!--切换地址-->
 <el-dialog v-model="showDialog" title="切换收货地址" width="30%" center>
@@ -257,23 +255,16 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
-.xtx-pay-checkout-page {
-  margin-top: 20px;
-  .wrapper {
-    background: #fff;
-    padding: 0 20px;
 
-    .box-title {
-      font-size: 16px;
-      font-weight: normal;
-      padding-left: 10px;
-      line-height: 70px;
-      border-bottom: 1px solid #f5f5f5;
-    }
-    .box-body {
-      padding: 20px 0;
-    }
-  }
+.box-title {
+  font-size: 16px;
+  font-weight: normal;
+  padding-left: 10px;
+  line-height: 70px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.box-body {
+  padding: 20px 0;
 }
 .address {
   border: 1px solid #f5f5f5;
@@ -340,7 +331,7 @@ defineExpose({
   }
 }
 .addressWrapper {
-  max-height: 500px;
+  max-height: 600px;
   overflow-y: auto;
 }
 

@@ -238,12 +238,7 @@ const handleChange = (i) => {
     }
   }
 
-  .tit {
-    color: #666;
-    font-size: 16px;
-    font-weight: normal;
-    line-height: 50px;
-  }
+
 
 }
 </style>
