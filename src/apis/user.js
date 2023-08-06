@@ -19,3 +19,23 @@ export const getLikeListAPI = ({ limit = 4 }) => {
       }
     })
   }
+
+export const getCodeAPI = (mobile) => {
+  return request({
+    url: '/login/code',
+    params:{
+      mobile
+    }
+  })
+}
+
+export const postCodeAPI = ({mobile,code}) => {
+  return request({
+    url: '/login/code',
+    method: 'POST',
+    data: {
+      mobile,
+      code
+    }
+  })
+}

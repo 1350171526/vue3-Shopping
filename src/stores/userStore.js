@@ -5,6 +5,10 @@ import { ref } from 'vue'
 import { loginAPI } from '@/apis/user'
 import { useCartStore } from './cartStore'
 import { mergeCartAPI } from '@/apis/cart'
+import { getCodeAPI,postCodeAPI } from '@/apis/user'
+import { ElMessage } from 'element-plus'
+import 'element-plus/theme-chalk/el-message.css'
+import router from '@/router'
 
 export const useUserStore = defineStore('user', () => {
   const cartStore = useCartStore()
@@ -23,6 +27,28 @@ export const useUserStore = defineStore('user', () => {
       }
     }))
     await cartStore.updateNewList()
+    // 1. 提示用户
+    ElMessage({ type: 'success', message: '登录成功' })
+    router.replace({ path: '/' })
+  }
+  // 2. 定义获取接口数据的action函数
+  const getUserInfo1 = async ({ mobile, code }) => {
+    const res = await postCodeAPI({ mobile, code })
+    userInfo.value = res.result
+    // 合并购物车操作
+    await mergeCartAPI(cartStore.cartList.map(item=>{
+      return{
+        skuId: item.skuId,
+        selected: item.selected,
+        count: item.count
+      }
+    }))
+    await cartStore.updateNewList()
+    // 1. 提示用户
+    ElMessage({ type: 'success', message: '登录成功' })
+    // 2. 跳转首页
+    router.replace({ path: '/' })
+
   }
    // 退出时清除用户信息
    const clearUserInfo = () => {
@@ -35,7 +61,8 @@ export const useUserStore = defineStore('user', () => {
   return {
     userInfo,
     getUserInfo,
-    clearUserInfo
+    clearUserInfo,
+    getUserInfo1
   }
 }, {
   // 持久化存储

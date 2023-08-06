@@ -1,17 +1,16 @@
 <script setup>
 import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import 'element-plus/theme-chalk/el-message.css'
-import { useRouter } from 'vue-router'
-
 import { useUserStore } from '@/stores/userStore'
-
+import { getCodeAPI } from '@/apis/user'
 const userStore = useUserStore()
 
 // 表单数据对象
 const userInfo = ref({
-  account: 'xiaotuxian001',
+  account: '13888888888',
+  // account: 'xiaotuxian001',
   password: '123456',
+  mobile: '13888888888',
+  code: '123456',
   agree: true
 })
 
@@ -35,7 +34,6 @@ const rules = {
 }
 
 const formRef = ref(null)
-const router = useRouter()
 const doLogin = () => {
   const { account, password } = userInfo.value
   // 调用实例方法
@@ -46,13 +44,23 @@ const doLogin = () => {
     if (valid) {
       // TODO LOGIN
       await userStore.getUserInfo({ account , password})
-     
-      // 1. 提示用户
-      ElMessage({ type: 'success', message: '登录成功' })
-      // 2. 跳转首页
-      router.replace({ path: '/' })
     }
   })
+}
+const isSelected = ref(true)
+const change = () => {
+  isSelected.value = !isSelected.value
+}
+
+// 发送验证码
+const sendCode = async(mobile) => {
+  await getCodeAPI(mobile)
+}
+
+// 登录
+const doLogin1 = async() => {
+  const { mobile, code } = userInfo.value
+  await userStore.getUserInfo1({ mobile, code })
 }
 </script>
 
@@ -78,13 +86,19 @@ const doLogin = () => {
         </nav>
         <div class="account-box">
           <div class="form">
-            <el-form ref="formRef" :model="userInfo" :rules="rules" label-position="right" label-width="60px"
+            <div class="button">
+              <el-button v-if="isSelected" type="primary" >密码登录</el-button>
+              <el-button v-else type="primary" plain @click="change">密码登录</el-button>
+              <el-button v-if="isSelected" type="primary" @click="change" plain>短信登录</el-button>
+              <el-button v-else type="primary" >短信登录</el-button>
+            </div>
+            <el-form v-if="isSelected" ref="formRef" :model="userInfo" :rules="rules" label-position="right" label-width="60px"
               status-icon>
               <el-form-item prop="account" label="账户">
                 <el-input v-model="userInfo.account" />
               </el-form-item>
               <el-form-item prop="password" label="密码">
-                <el-input v-model="userInfo.password" />
+                <el-input v-model="userInfo.password" show-password/>
               </el-form-item>
               <el-form-item  prop="agree" label-width="22px">
                 <el-checkbox  v-model="userInfo.agree" size="large">
@@ -92,6 +106,24 @@ const doLogin = () => {
                 </el-checkbox>
               </el-form-item>
               <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
+            </el-form>
+            <el-form v-else :model="userInfo" label-position="right" label-width="60px"
+              status-icon>
+              <el-input class="bottom" v-model="userInfo.mobile" placeholder="请输入手机号">
+                <template #prepend>手机号：</template>
+                <template #append>
+                  <a class="sendCode" @click="sendCode(userInfo.mobile)">发送验证码</a>
+                </template>
+              </el-input>
+              <el-input class="bottom" v-model="userInfo.code" placeholder="请输入验证码">
+                <template #prepend>验证码：</template>
+              </el-input>
+              <el-form-item  prop="agree" label-width="22px">
+                <el-checkbox  v-model="userInfo.agree" size="large">
+                  我已同意隐私条款和服务条款
+                </el-checkbox>
+              </el-form-item>
+              <el-button size="large" class="subBtn" @click="doLogin1">点击登录</el-button>
             </el-form>
           </div>
         </div>
@@ -340,5 +372,27 @@ const doLogin = () => {
   background: $xtxColor;
   width: 100%;
   color: #fff;
+}
+
+.button{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.bottom{
+  margin-bottom: 20px;
+}
+
+.sendCode{
+  display: block;
+  cursor: pointer;
+  
+  &:hover{
+    color: $xtxColor;
+  }
+
+  &:active{
+    color: $sucColor;
+  }
 }
 </style>@/stores/userStore
