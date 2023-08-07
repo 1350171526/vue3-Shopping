@@ -121,7 +121,7 @@ const router = createRouter({
   }
 })
 router.beforeEach(async(to) => {
-  const title = (to.meta.title ? to.meta.title : '') + '小兔鲜儿'
+  const title = (to.meta.title ? to.meta.title : '') + '乐天商城'
   document.title = title
 })
 

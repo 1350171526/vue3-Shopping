@@ -21,7 +21,7 @@ const getGoods = async (id = route.params.id) => {
   const res = await getDetail(id)
   
   goods.value = res.result
-  document.title = goods.value.name + '-小兔鲜儿'
+  document.title = goods.value.name + '-乐天商城'
 }
 onMounted(() => {
   getGoods()
