@@ -8,6 +8,6 @@ export const componentPlugin = {
     // app.component('组件名字'，组件配置对象)
     app.component('XtxImageView', ImageView)
     app.component('XtxSku', Sku)
-    app.component('Address', Address)
+    app.component('AddressModel', Address)
   }
 }

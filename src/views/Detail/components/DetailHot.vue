@@ -2,7 +2,7 @@
 import { ref,onMounted } from 'vue'
 import { fetchHotGoodsAPI } from '@/apis/detail'
 import { useRoute } from 'vue-router'
-import { computed } from '@vue/reactivity'
+import { computed } from 'vue'
 
 // 路由缓存
 import { onBeforeRouteUpdate } from 'vue-router';

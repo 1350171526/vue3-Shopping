@@ -22,7 +22,8 @@ const allCheck = (selected) => {
 
 // 点击结算
 const checkout = () => {
-  if(cartStore.cartList.length===0){
+  const isHaveSelected = cartStore.cartList.every(item => item.selected == false)
+  if(cartStore.cartList.length===0 || isHaveSelected == true){
     ElMessage.warning('无有效商品！')
     return
   }else{

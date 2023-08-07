@@ -55,7 +55,7 @@ const createOrder = async () => {
       <!-- <address  /> -->
       <div class="wrapper">
         <!-- 收货地址 -->
-        <Address ref="curAdd"/>
+        <AddressModel ref="curAdd"/>
         <!-- 商品信息 -->
         <h3 class="box-title">商品信息</h3>
         <div class="box-body">

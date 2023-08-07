@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <Address />
+    <AddressModel />
 </template>
 
 <style lang="scss" scoped>

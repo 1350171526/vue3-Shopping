@@ -120,7 +120,7 @@ const router = createRouter({
     }
   }
 })
-router.beforeEach(async(to, from) => {
+router.beforeEach(async(to) => {
   const title = (to.meta.title ? to.meta.title : '') + '小兔鲜儿'
   document.title = title
 })

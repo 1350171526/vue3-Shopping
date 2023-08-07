@@ -78,7 +78,7 @@ const addAddress = async () => {
   // console.log(cityList);
   // console.log(form.value.fullLocation);
   
-  if (!formRef) return
+  if (!formRef.value) return
   // console.log(typeof(checkInfo.value.userAddresses[6].fullLocation));
   await formRef.value.validate(async (valid) =>{
     // valid 表示所有的表单全部为验证通过 才为true
